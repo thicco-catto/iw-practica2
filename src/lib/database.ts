@@ -19,5 +19,5 @@ if (uri === undefined) {
 }
 
 export default async function GetDatabase() {
-    return await clientPromise;
+    return (await clientPromise).db("Rastro");
 }
