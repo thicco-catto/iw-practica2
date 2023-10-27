@@ -18,6 +18,12 @@ if (uri === undefined) {
     clientPromise = client.connect();
 }
 
-export default async function GetDatabase() {
-    return (await clientPromise).db("Rastro");
+/**
+ * Returns a database instance.
+ * 
+ * @param name Don't specify a name to get the Rastro database.
+ * @returns
+ */
+export default async function GetDatabase(name = "Rastro") {
+    return (await clientPromise).db(name);
 }
