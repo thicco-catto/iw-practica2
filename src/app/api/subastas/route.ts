@@ -1,12 +1,7 @@
-import GetDatabase from "@/lib/database";
+import { GetSubastas } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
-
-async function GetSubastas() {
-    const db = await GetDatabase();
-    return db.collection("Subastas");
-}
+import { Filter, Document } from "mongodb";
 
 const KEYS: string[] = [
     "Descripcion",
@@ -18,29 +13,32 @@ const KEYS: string[] = [
 ];
 
 export async function GET(request: NextRequest) {
-    const params = request.nextUrl.searchParams;
-    const id = params.get("id");
-
     const subastas = await GetSubastas();
-    let res;
+    const params = request.nextUrl.searchParams;
 
-    if(id !== null) {
-        res = await subastas.find({
-            _id: {$eq: ObjectId.createFromHexString(id)}
-        }).toArray();
+    const filter: Filter<Document> = {$and: []};
 
-        // Do we only need to send 404 if they specify the id?
-        if(res.length === 0) {
-            return NextResponse.json(
-                {},
-                {
-                    status: 404
-                }
-            );
+    const minPrice = params.get("minPrice");
+    if(minPrice) {
+        const parsedMinPrice = parseInt(minPrice);
+        if(Number.isNaN(parsedMinPrice)) {
+            return NextResponse.json({}, {status: 406});
         }
-    } else {
-        res = await subastas.find().limit(20).toArray();
+
+        filter.$and?.push({"Precio partida": {$gte: parsedMinPrice}});
     }
+
+    const maxPrice = params.get("maxPrice");
+    if(maxPrice) {
+        const parsedMaxPrice = parseInt(maxPrice);
+        if(Number.isNaN(parsedMaxPrice)) {
+            return NextResponse.json({}, {status: 406});
+        }
+
+        filter.$and?.push({"Precio partida": {$lte: parsedMaxPrice}});
+    }
+
+    const res = await subastas.find(filter).toArray();
 
     return NextResponse.json(
         res,
@@ -72,37 +70,6 @@ export async function POST(request: NextRequest) {
         {
             id: id
         },
-        {
-            status: status
-        }
-    );
-}
-
-export async function DELETE(request: NextRequest) {
-    const params = request.nextUrl.searchParams;
-    const id = params.get("id");
-    
-    if(!id) {
-        return NextResponse.json(
-            {
-                message: "You need to specify the id of the element to be deleted."
-            },
-            {
-                status: 400
-            }
-        );
-    }
-
-    const subastas = await GetSubastas();
-
-    const res = await subastas.deleteOne({
-        _id: {"$eq": ObjectId.createFromHexString(id)}
-    });
-
-    const status = res.acknowledged ? 204: 500;
-
-    return NextResponse.json(
-        {},
         {
             status: status
         }
