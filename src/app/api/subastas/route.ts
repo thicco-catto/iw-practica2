@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
     const result = await subastas.insertOne(json);
 
-    const status = result.acknowledged? 200: 500;
+    const status = result.acknowledged? 201: 500;
     const id = result.insertedId;
 
     return NextResponse.json(
@@ -99,7 +99,7 @@ export async function DELETE(request: NextRequest) {
         _id: {"$eq": ObjectId.createFromHexString(id)}
     });
 
-    const status = res.acknowledged ? 200: 500;
+    const status = res.acknowledged ? 204: 500;
 
     return NextResponse.json(
         {},
