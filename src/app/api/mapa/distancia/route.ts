@@ -1,7 +1,15 @@
 import { GetDirecciones } from "@/lib/database";
 import { GetIdFilter } from "@/lib/route_helper";
 import { NextRequest, NextResponse } from "next/server";
+import { GetOSMAddress } from "../direccion/[id]/route";
 
+function degToRad(degrees: number)
+{
+  const pi = Math.PI;
+  return degrees * (pi/180);
+}
+
+//TODO: Minor, but find a way to calculate the actual distance, not just a straight line.
 export async function GET(request: NextRequest) {
     const params = request.nextUrl.searchParams;
 
@@ -45,12 +53,23 @@ export async function GET(request: NextRequest) {
         );
     }
 
+    const fromOSM = await GetOSMAddress(from);
+    const toOSM = await GetOSMAddress(to);
+
+    const lat1 = degToRad(fromOSM.lat);
+    const lon1 = degToRad(fromOSM.lon);
+
+    const lat2 = degToRad(toOSM.lat);
+    const lon2 = degToRad(toOSM.lon);
+
+    const distance = Math.acos(Math.sin(lat1)*Math.sin(lat2)+Math.cos(lat1)*Math.cos(lat2)*Math.cos(lon2-lon1))*6371;
+
     return NextResponse.json(
         {
-            msg: "Todo"
+            distance: distance
         },
         {
-            status: 502
+            status: 200
         }
     );
 }
