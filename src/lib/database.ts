@@ -32,3 +32,8 @@ export async function GetSubastas() {
     const db = await GetDatabase();
     return db.collection("Subastas");
 }
+
+export async function GetDirecciones() {
+    const db = await GetDatabase();
+    return db.collection("Direcciones");
+}
