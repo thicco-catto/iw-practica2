@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
             {},
             {
-                status: 400
+                status: 406
             }
         );
     }
