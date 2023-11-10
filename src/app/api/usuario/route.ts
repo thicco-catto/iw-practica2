@@ -1,48 +1,47 @@
-import { GetSubastas } from "@/lib/database";
+import { GetUsuarios } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
 import { NextRequest, NextResponse } from "next/server";
 import { Filter, Document } from "mongodb";
 
 const KEYS: string[] = [
-    "Descripcion",
-    "Fecha limite",
+    "Email",
+    "Nombre usuario",
     "Foto",
-    "Precio partida",
-    "Titulo",
-    "Subastador",
 ];
 
 export async function GET(request: NextRequest) {
-    const subastas = await GetSubastas();
+    const usuarios = await GetUsuarios();
     const params = request.nextUrl.searchParams;
 
     const filter: Filter<Document> = {$and: []};
 
-    const minPrice = params.get("minPrice");
-    if(minPrice) {
-        const parsedMinPrice = parseInt(minPrice);
-        if(Number.isNaN(parsedMinPrice)) {
-            return NextResponse.json({}, {status: 406});
-        }
-
-        filter.$and?.push({"Precio partida": {$gte: parsedMinPrice}});
+    const nombreUsuario = params.get("nombreUsuario");
+    if(nombreUsuario) {
+        //const parsedMinPrice = parseInt(nombreUsuario);
+        //if(Number.isNaN(parsedMinPrice)) {
+        //    return NextResponse.json({}, {status: 406});
+        //}
+        //
+        filter.$and?.push({"Nombre usuario": {$text: {
+            $search:  nombreUsuario}}});
     }
 
-    const maxPrice = params.get("maxPrice");
-    if(maxPrice) {
-        const parsedMaxPrice = parseInt(maxPrice);
-        if(Number.isNaN(parsedMaxPrice)) {
-            return NextResponse.json({}, {status: 406});
-        }
-
-        filter.$and?.push({"Precio partida": {$lte: parsedMaxPrice}});
+    const email = params.get("emailUsuario");
+    if(email) {
+        //const parsedMinPrice = parseInt(nombreUsuario);
+        //if(Number.isNaN(parsedMinPrice)) {
+        //    return NextResponse.json({}, {status: 406});
+        //}
+        //
+        filter.$and?.push({"Email": {$eq: email}});
     }
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
     if(filter.$and?.length === 0) {
         delete filter.$and;
     }
-    const res = await subastas.find(filter).toArray();
+
+    const res = await usuarios.find(filter).toArray();
 
     return NextResponse.json(
         res,
@@ -53,7 +52,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const subastas = await GetSubastas();
+    const usuarios = await GetUsuarios();
     const json = await request.json();
 
     if(!HasAllKeys(json, KEYS)) {
@@ -64,8 +63,8 @@ export async function POST(request: NextRequest) {
             }
         );
     }
-    
-    const result = await subastas.insertOne(json);
+
+    const result = await usuarios.insertOne(json);
 
     const status = result.acknowledged? 201: 500;
     const id = result.insertedId;
