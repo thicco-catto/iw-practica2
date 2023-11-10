@@ -1,4 +1,4 @@
-import { GetSubastas } from "@/lib/database";
+import { GetDirecciones } from "@/lib/database";
 import { HasCorrectKeys } from "@/lib/dict_helper";
 import { GetIdFilter, Params } from "@/lib/route_helper";
 import { NextRequest, NextResponse } from "next/server";
@@ -8,24 +8,24 @@ interface RouteParams {
 }
 
 const KEYS: string[] = [
-    "Descripcion",
-    "Fecha limite",
-    "Foto",
-    "Precio partida",
-    "Titulo",
-    "Subastador",
+    "Calle",
+    "Codigo postal",
+    "Localidad",
+    "Provincia",
+    "Numero",
+    "Pais",
 ];
 
-export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
+export async function GET(_: NextRequest, {params}: Params<RouteParams>){
     const id = params.id;
 
     if(id.length !== 24) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const subastas = await GetSubastas();
+    const direcciones = await GetDirecciones();
 
-    const res = await subastas.find(GetIdFilter(id)).toArray();
+    const res = await direcciones.find(GetIdFilter(id)).toArray();
 
     if(res.length === 0) {
         return NextResponse.json({}, {status: 404});
@@ -43,13 +43,13 @@ export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
 
     const json = await request.json();
 
-    const subastas = await GetSubastas();
+    const direcciones = await GetDirecciones();
 
     if(!HasCorrectKeys(json, KEYS)) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const res = await subastas.updateOne(
+    const res = await direcciones.updateOne(
         GetIdFilter(id),
         {
             $set: json
@@ -63,16 +63,16 @@ export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
     return NextResponse.json({}, {status: 200});
 }
 
-export async function DELETE(_: NextRequest, {params}: Params<RouteParams>) {
+export async function DELETE(_: NextRequest, {params}: Params<RouteParams>){
     const id = params.id;
 
     if(id.length !== 24) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const subastas = await GetSubastas();
+    const direcciones = await GetDirecciones();
 
-    const res = await subastas.deleteOne(GetIdFilter(id));
+    const res = await direcciones.deleteOne(GetIdFilter(id));
 
     const status = res.acknowledged ? 200: 500;
 

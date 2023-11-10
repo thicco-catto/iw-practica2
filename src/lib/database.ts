@@ -36,3 +36,12 @@ export async function GetUsuarios() {
     const db = await GetDatabase();
     return db.collection("Usuarios");
 }
+export async function GetPujas() {
+    const db = await GetDatabase();
+    return db.collection("Pujas");
+}
+
+export async function GetDirecciones() {
+    const db = await GetDatabase();
+    return db.collection("Direcciones");
+}
