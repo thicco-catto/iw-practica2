@@ -1,7 +1,7 @@
 import { GetSubastas } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
 import { NextRequest, NextResponse } from "next/server";
-import { Filter, Document } from "mongodb";
+import { Filter, Document, ObjectId } from "mongodb";
 
 const KEYS: string[] = [
     "Descripcion",
@@ -27,7 +27,8 @@ export async function GET(request: NextRequest) {
 
         filter.$and?.push({"Precio partida": {$gte: parsedMinPrice}});
     }
-
+    
+    
     const maxPrice = params.get("maxPrice");
     if(maxPrice) {
         const parsedMaxPrice = parseInt(maxPrice);
