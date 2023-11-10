@@ -3,7 +3,7 @@ import { HasCorrectKeys } from "@/lib/dict_helper";
 import { GetIdFilter, Params } from "@/lib/route_helper";
 import { NextRequest, NextResponse } from "next/server";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { Filter } from "mongodb";
+import { Filter, Document, ObjectId } from "mongodb";
 
 interface RouteParams {
     id: string
@@ -21,28 +21,26 @@ export async function GET(request: NextRequest) {
 
     //Filter
     const params = request.nextUrl.searchParams;
-    const filter: Filter<Document> = {};
-    const fecha = params.get("fecha");
-    const postor = params.get("fecha");
-    const minPrice = params.get("minPrice");
+    const filter: Filter<Document> = {$and: []};
+    const cantidad = params.get("Cantidad");
+    const fecha = params.get("Fecha");
 
     if(fecha){
-        filter["Fecha de puja"] = {$eq: fecha};
+        filter.$and?.push({"Fecha de puja": {$lt: fecha}});
     }
 
-    if(postor){
-        filter["Postor"] = {$eq: postor};
-    }
-
-    if(minPrice) {
-        const parsedMinPrice = parseInt(minPrice);
-        if(Number.isNaN(parsedMinPrice)) {
+    if(cantidad) {
+        const parsedCantidad = parseInt(cantidad);
+        if(Number.isNaN(parsedCantidad)) {
             return NextResponse.json({}, {status: 406});
         }
-
-        filter.$and?.push({"Precio partida": {$gte: parsedMinPrice}});
+        filter.$and?.push({"Cantidad": {$gte: parsedCantidad}});
     }
 
+    //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
+    if(filter.$and?.length === 0) {
+        delete filter.$and;
+    }
     const res = await pujas.find(filter).toArray();
 
     return NextResponse.json(
