@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     const fecha = params.get("Fecha");
 
     if(fecha){
-        filter.$and?.push({"Fecha de puja": {$lt: fecha}});
+        const fechaBuena = new Date(fecha);
+        filter.$and?.push({"Fecha de puja": {$lt: fechaBuena}});
     }
 
     if(cantidad) {
