@@ -40,13 +40,13 @@ export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
 
     const json = await request.json();
 
-    const subastas = await GetUsuarios();
+    const usuario = await GetUsuarios();
 
     if(!HasCorrectKeys(json, KEYS)) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const res = await subastas.updateOne(
+    const res = await usuario.updateOne(
         GetIdFilter(id),
         {
             $set: json
@@ -67,9 +67,9 @@ export async function DELETE(_: NextRequest, {params}: Params<RouteParams>) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const subastas = await GetUsuarios();
+    const usuario = await GetUsuarios();
 
-    const res = await subastas.deleteOne(GetIdFilter(id));
+    const res = await usuario.deleteOne(GetIdFilter(id));
 
     const status = res.acknowledged ? 204: 500;
 
