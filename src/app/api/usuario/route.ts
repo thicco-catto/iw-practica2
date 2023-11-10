@@ -17,23 +17,12 @@ export async function GET(request: NextRequest) {
 
     const nombreUsuario = params.get("nombreUsuario");
     if(nombreUsuario) {
-        //const parsedMinPrice = parseInt(nombreUsuario);
-        //if(Number.isNaN(parsedMinPrice)) {
-        //    return NextResponse.json({}, {status: 406});
-        //}
-        //
-        filter.$and?.push({"Nombre usuario": {$text: {
-            $search:  nombreUsuario}}});
+        filter.$and?.push({ "Nombre usuario": { $regex: nombreUsuario, $options: 'i' } });
     }
 
     const email = params.get("emailUsuario");
     if(email) {
-        //const parsedMinPrice = parseInt(nombreUsuario);
-        //if(Number.isNaN(parsedMinPrice)) {
-        //    return NextResponse.json({}, {status: 406});
-        //}
-        //
-        filter.$and?.push({"Email": {$eq: email}});
+        filter.$and?.push({ "Email": { $regex: email, $options: 'i' } });
     }
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
