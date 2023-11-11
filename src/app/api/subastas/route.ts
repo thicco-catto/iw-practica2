@@ -1,7 +1,7 @@
 import { GetSubastas } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
 import { NextRequest, NextResponse } from "next/server";
-import { Filter, Document, ObjectId } from "mongodb";
+import { Filter, Document } from "mongodb";
 
 const KEYS: string[] = [
     "Descripcion",
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     }
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
-    if(filter.$and?.length === 0) {
+    if (filter.$and?.length === 0) {
         delete filter.$and;
     }
     const res = await subastas.find(filter).toArray();
