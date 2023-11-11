@@ -27,6 +27,7 @@ export async function GetVehiclesModels(id: string) {
             method: "GET"
         }
     );
+    return response.json();
 
 }
 
