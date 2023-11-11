@@ -6,11 +6,28 @@ interface RouteParams {
     id: string
 }
 
-export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
-    const cloudinary = await GetCloudinary();
+export async function GET(_: NextRequest, { params }: Params<RouteParams>) {
+    const cloudinary = GetCloudinary();
     const publicId = params.id;
 
-    const result = await cloudinary.api.resource(publicId);
+    try {
+        const result = await cloudinary.api.resource(publicId);
 
-    return NextResponse.json(result, {status: 200});
+        return NextResponse.json(result, { status: 200 });
+    } catch (_) {
+        return NextResponse.json({}, { status: 404 });
+    }
+}
+
+export async function DELETE(_: NextRequest, { params }: Params<RouteParams>) {
+    const cloudinary = GetCloudinary();
+    const publicID = params.id;
+
+    try {
+        const result = await cloudinary.uploader.destroy(publicID);
+
+        return NextResponse.json(result, { status: 200 });
+    } catch (_) {
+        return NextResponse.json({}, { status: 404 });
+    }
 }
