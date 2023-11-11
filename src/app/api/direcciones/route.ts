@@ -15,13 +15,28 @@ const KEYS: string[] = [
 export async function GET(request: NextRequest) {
     const direcciones = await GetDirecciones();
 
-    //Filter
     const params = request.nextUrl.searchParams;
-    const filter: Filter<Document> = {};
-    const codigoPostal = params.get("codigoPostal");
 
+    const filter: Filter<Document> = {};
+
+    const codigoPostal = params.get("codigoPostal");
     if(codigoPostal){
-        filter["Codigo postal"] = {$eq: codigoPostal};
+        filter["Codigo postal"] = codigoPostal;
+    }
+
+    const numero = params.get("numero");
+    if(numero){
+        const parsedNumero = parseInt(numero);
+        if(Number.isNaN(parsedNumero)){
+            return NextResponse.json({}, {status: 406});
+        }
+
+        filter["Numero"] = parsedNumero;
+    }
+
+    const provincia = params.get("provincia");
+    if(provincia){
+        filter["Provincia"] = provincia;
     }
 
     const res = await direcciones.find(filter).toArray();
