@@ -1,13 +1,7 @@
 import { GetPujas } from "@/lib/database";
-import { HasCorrectKeys } from "@/lib/dict_helper";
-import { GetIdFilter, Params } from "@/lib/route_helper";
 import { NextRequest, NextResponse } from "next/server";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { Filter, Document, ObjectId } from "mongodb";
-
-interface RouteParams {
-    id: string
-}
+import { Filter, Document } from "mongodb";
 
 const KEYS: string[] = [
     "Fecha de puja",

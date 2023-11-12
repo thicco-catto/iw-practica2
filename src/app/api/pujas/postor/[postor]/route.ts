@@ -1,7 +1,7 @@
 import { GetPujas } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
-import { Filter, Document, ObjectId } from "mongodb";
-import { GetIdFilter, Params } from "@/lib/route_helper";
+import { ObjectId } from "mongodb";
+import { Params } from "@/lib/route_helper";
 
 interface RouteParams {
     postor: string
@@ -10,7 +10,7 @@ interface RouteParams {
 export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
     const id = params.postor;
 
-    if(id.length !== 24) {
+    if(!ObjectId.isValid(id)) {
         return NextResponse.json({}, {status: 406});
     }
 

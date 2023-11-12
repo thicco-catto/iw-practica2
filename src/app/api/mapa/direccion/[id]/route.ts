@@ -1,6 +1,6 @@
 import { GetDirecciones } from "@/lib/database";
 import { GetIdFilter, Params } from "@/lib/route_helper";
-import { WithId, Document } from "mongodb";
+import { WithId, Document, ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
 interface RouteParams {
@@ -30,7 +30,7 @@ export async function GetOSMAddress(direccion: WithId<Document>) {
 export async function GET(_: unknown, {params}: Params<RouteParams>) {
     const id = params.id;
 
-    if(id.length !== 24) {
+    if(!ObjectId.isValid(id)) {
         return NextResponse.json(
             {
                 msg: "The object ids are not correct."
