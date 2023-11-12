@@ -81,7 +81,7 @@ export async function POST(request: NextRequest){
       }
       const result = getData();
 
-       if(!(result===undefined)){
+       if((result===undefined)){
         return NextResponse.json({Error: "Internal Error"},{status: 500});
     }else{
         return NextResponse.json(result,{status: 200});
