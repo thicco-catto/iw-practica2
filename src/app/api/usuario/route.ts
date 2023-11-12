@@ -17,12 +17,12 @@ export async function GET(request: NextRequest) {
 
     const nombreUsuario = params.get("nombreUsuario");
     if(nombreUsuario) {
-        filter.$and?.push({ "Nombre usuario": { $regex: nombreUsuario, $options: 'i' } });
+        filter.$and?.push({ "Nombre usuario": { $regex: nombreUsuario, $options: "i" } });
     }
 
     const email = params.get("emailUsuario");
     if(email) {
-        filter.$and?.push({ "Email": { $regex: email, $options: 'i' } });
+        filter.$and?.push({ "Email": { $regex: email, $options: "i" } });
     }
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
