@@ -13,7 +13,7 @@ export async function GET(_: NextRequest, { params }: Params<RouteParams>) {
     try {
         const result = await cloudinary.api.resource(publicId);
 
-        return NextResponse.json(result, { status: 200 });
+        return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
     } catch (_) {
         return NextResponse.json({}, { status: 404 });
     }

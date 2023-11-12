@@ -1,6 +1,7 @@
 import { GetSubastas } from "@/lib/database";
 import { HasCorrectKeys } from "@/lib/dict_helper";
 import { GetIdFilter, Params } from "@/lib/route_helper";
+import { ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 interface RouteParams {
@@ -19,25 +20,25 @@ const KEYS: string[] = [
 export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
     const id = params.id;
 
-    if(id.length !== 24) {
+    if(!ObjectId.isValid(id)) {
         return NextResponse.json({}, {status: 406});
     }
 
     const subastas = await GetSubastas();
 
-    const res = await subastas.find(GetIdFilter(id)).toArray();
+    const res = await subastas.findOne(GetIdFilter(id));
 
-    if(res.length === 0) {
+    if(!res) {
         return NextResponse.json({}, {status: 404});
     }
 
-    return NextResponse.json(res[0], {status: 200});
+    return NextResponse.json(res, {status: 200});
 }
 
 export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
     const id = params.id;
 
-    if(id.length !== 24) {
+    if(!ObjectId.isValid(id)) {
         return NextResponse.json({}, {status: 406});
     }
 
@@ -66,7 +67,7 @@ export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
 export async function DELETE(_: NextRequest, {params}: Params<RouteParams>) {
     const id = params.id;
 
-    if(id.length !== 24) {
+    if(!ObjectId.isValid(id)) {
         return NextResponse.json({}, {status: 406});
     }
 

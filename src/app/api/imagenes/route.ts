@@ -11,12 +11,19 @@ function createMissingFolders(destination: string) {
     }
 }
 
-export async function POST(request: NextRequest){
-    const formData = await request.formData();
+export async function POST(request: NextRequest) {
+    let formData;
+
+    try {
+        formData = await request.formData();
+    } catch (_) {
+        return NextResponse.json({ msg: "Body must be form data" }, { status: 406 });
+    }
+
     const file = formData.get("file");
 
-    if(!file) {
-        return NextResponse.json({msg: "Field \"file\" is missing"}, {status: 406});
+    if (!file) {
+        return NextResponse.json({ msg: "Field file is missing" }, { status: 400 });
     }
 
     const image = file as File;
@@ -28,9 +35,9 @@ export async function POST(request: NextRequest){
     writeFileSync(filePath, buffer);
 
     const cloudinary = GetCloudinary();
-    const response = await cloudinary.uploader.upload(filePath);
+    const result = await cloudinary.uploader.upload(filePath);
 
     rmSync(filePath);
 
-    return NextResponse.json(response, {status: 200});
+    return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
 }

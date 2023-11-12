@@ -10,22 +10,23 @@ interface RouteParams {
 export async function GET(request: NextRequest, {params}: Params<RouteParams>) {
     const id = params.id;
 
-    if (id.length !== 24){
+    if (!ObjectId.isValid(id)){
         return NextResponse.json({}, {status: 406});
     }
 
     const pujas = await GetPujas();
 
     if (request.nextUrl.pathname.endsWith("pujaMasAlta")){
-        const pujasSubasta = await pujas.find({Subasta: ObjectId.createFromHexString(id)}).toArray();
-
-        console.log(pujasSubasta.length);
+        const pujasSubasta = await pujas.find({Subasta: ObjectId.createFromHexString(id)})
+            .sort({Cantidad: -1})
+            .limit(1)
+            .toArray();
 
         if (pujasSubasta.length === 0){
             return NextResponse.json({}, {status: 404});
         }
 
-        const pujaMasAlta = pujasSubasta.sort((a, b) => b.Cantidad - a.Cantidad)[0];
+        const pujaMasAlta = pujasSubasta[0];
 
         return NextResponse.json(pujaMasAlta, {status: 200});
     }

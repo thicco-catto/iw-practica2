@@ -59,12 +59,17 @@ export async function POST(request: NextRequest) {
 
     if(!HasAllKeys(json, KEYS)) {
         return NextResponse.json(
-            {},
+            {
+                msg: "Fields are not correct"
+            },
             {
                 status: 406
             }
         );
     }
+
+    json["Fecha limite"] = new Date(json["Fecha limite"]);
+    json["Estado"] = "en subasta";
     
     const result = await subastas.insertOne(json);
 

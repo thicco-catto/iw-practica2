@@ -10,7 +10,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, {params}: Params<RouteParams>){
     const id = params.id;
 
-    if (id.length !== 24){
+    if (!ObjectId.isValid(id)){
         return NextResponse.json({}, {status: 406});
     }
 
