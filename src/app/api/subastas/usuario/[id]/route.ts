@@ -37,30 +37,3 @@ export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
     //devuelvo el array entero
     return NextResponse.json(res, {status: 200});
 }
-
-
-//export async function GET(request: NextRequest) {
-//    const params = request.nextUrl.searchParams;
-//    const filter: Filter<Document> = {$and: []};
-//    const subastas = await GetSubastas();
-//
-////Dado un nombre de usuario devolver todas sus subasta
-//
-//    const nombreSubastador = params.get("usuario");
-//    if(nombreSubastador) {
-//        filter.$and?.push({ "Subastador": { $eq:ObjectId.createFromHexString( nombreSubastador)} });
-//    }
-//
-//    if(filter.$and?.length === 0) {
-//        delete filter.$and;
-//    }
-//    const res = await subastas.find(filter).toArray();
-//
-//    return NextResponse.json(
-//        res,
-//        {
-//            status: 200
-//        }
-//    );
-///////////////////////////////////////////////////////
-//}
