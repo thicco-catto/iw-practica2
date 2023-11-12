@@ -4,6 +4,7 @@ import { GetDistance } from "../../distancia/route";
 import { GetDirecciones } from "@/lib/database";
 import { GetIdFilter } from "@/lib/route_helper";
 import { ObjectId } from "mongodb";
+import { getCO2Footprint } from "@/lib/carbonInterface";
 
 const KEYS: string[] = [
     "adressFrom",
@@ -55,30 +56,8 @@ export async function POST(request: NextRequest){
     const model = json.model;
     const distance = await GetDistance(from, to);
 
-    const getData = async () => {
-        try {
-          const response = await fetch('https://www.carboninterface.com/api/v1/estimates', {
-            method: 'POST',
-            body: JSON.stringify({
-              type: "vehicle",
-            distance_unit: "km",
-            distance_value: distance,
-            vehicle_model_id: model
-            }),
-            headers: {
-              Authorization: "Bearer F3dngTi1y1tDC5LeY2QKaQ",
-              'Content-type':'application/json'
-            }
-          })
-          const res = await response.json()
-
-          return res;
-        } catch (error) {
-          console.error(error)
-          return undefined;
-        }
-      }
-      const result = await getData();
+    
+      const result = await getCO2Footprint(distance, model);
 
        if((result===undefined)){
         return NextResponse.json({Error: "Internal Error"},{status: 500});
