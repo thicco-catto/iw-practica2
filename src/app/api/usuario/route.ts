@@ -39,22 +39,21 @@ export async function GET(request: NextRequest) {
         }
     );
 }
-
+//Insert
 export async function POST(request: NextRequest) {
     const usuarios = await GetUsuarios();
     const json = await request.json();
 
     if(!HasAllKeys(json, KEYS)) {
         return NextResponse.json(
-            {},
+            {msg: "Faltan atributos"},
             {
-                status: 400
+                status: 406
             }
         );
     }
 
     const result = await usuarios.insertOne(json);
-
     const status = result.acknowledged? 201: 500;
     const id = result.insertedId;
 

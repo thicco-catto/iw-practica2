@@ -60,7 +60,7 @@ export async function PUT(request: NextRequest, {params}: Params<RouteParams>) {
 
     return NextResponse.json({}, {status: 200});
 }
-
+//Delete
 export async function DELETE(_: NextRequest, {params}: Params<RouteParams>) {
     const id = params.id;
 
@@ -72,7 +72,7 @@ export async function DELETE(_: NextRequest, {params}: Params<RouteParams>) {
 
     const res = await usuario.deleteOne(GetIdFilter(id));
 
-    const status = res.acknowledged ? 204: 500;
+    const status = res.acknowledged ? 200: 500;
 
     return NextResponse.json(
         {},
