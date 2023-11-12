@@ -35,8 +35,8 @@ export async function GetVehiclesModels(id: string) {
     
     const getData = async () => {
         try {
-          const response = await fetch('https://www.carboninterface.com/api/v1/estimates', {
-            method: 'POST',
+          const response = await fetch("https://www.carboninterface.com/api/v1/estimates", {
+            method: "POST",
             body: JSON.stringify({
               type: "vehicle",
             distance_unit: "km",
@@ -45,17 +45,17 @@ export async function GetVehiclesModels(id: string) {
             }),
             headers: {
               Authorization: "Bearer F3dngTi1y1tDC5LeY2QKaQ",
-              'Content-type':'application/json'
+              "Content-type":"application/json"
             }
-          })
-          const res = await response.json()
+          });
+          const res = await response.json();
 
           return res;
         } catch (error) {
-          console.error(error)
+          console.error(error);
           return undefined;
         }
-      }  
-      const result = await getData()
+      };  
+      const result = await getData();
       return  result;
 }
