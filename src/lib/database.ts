@@ -45,3 +45,11 @@ export async function GetDirecciones() {
     const db = await GetDatabase();
     return db.collection("Direcciones");
 }
+export async function GetChats() {
+    const db = await GetDatabase();
+    return db.collection("Chats");
+}
+export async function GetMessages() {
+    const db = await GetDatabase();
+    return db.collection("Messages");
+}
