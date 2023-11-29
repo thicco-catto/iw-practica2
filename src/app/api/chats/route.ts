@@ -1,6 +1,6 @@
 import { GetChats } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { ObjectId } from "mongodb";
+import { Filter, ObjectId } from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -10,10 +10,25 @@ const KEYS: string[] = [
     "Seller"
 ];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const chats = await GetChats();
+    const params = request.nextUrl.searchParams;
 
+    const filter: Filter<Document> = {$and: []};
+
+    const user = params.get("user");
+    if(user) {
+        if(ObjectId.isValid(user)){
+        filter.$and?.push({"User": {$eq: ObjectId.createFromHexString(user)}});
+        }
+    }
     const res = await chats.find().toArray();
+    const seller = params.get("seller");
+    if(seller){
+        if(ObjectId.isValid(seller)){
+        filter.$and?.push({"Seller": {$eq: ObjectId.createFromHexString(seller)}});
+        }
+    }
 
     return NextResponse.json(
         res,
