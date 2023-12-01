@@ -1,6 +1,6 @@
 import { GetMessages } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { ObjectId} from "mongodb";
+import { Filter, ObjectId, Document} from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 const KEYS: string[] = [
@@ -9,10 +9,18 @@ const KEYS: string[] = [
     "Chat"
 ];
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const chats = await GetMessages();
+    const params = request.nextUrl.searchParams;
+    const filter: Filter<Document> = {$and: []};
 
-    const res = await chats.find().toArray();
+    const sender = params.get("sender");
+    if(sender) {
+        if(ObjectId.isValid(sender)){
+        filter.$and?.push({"Sender": {$eq: ObjectId.createFromHexString(sender)}});
+        }
+    }
+    const res = await chats.find(filter).sort({Time: -1}).toArray();
 
     return NextResponse.json(
         res,

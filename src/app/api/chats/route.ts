@@ -1,6 +1,6 @@
 import { GetChats } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { Filter, ObjectId } from "mongodb";
+import { Filter, ObjectId, Document} from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -22,13 +22,17 @@ export async function GET(request: NextRequest) {
         filter.$and?.push({"User": {$eq: ObjectId.createFromHexString(user)}});
         }
     }
-    const res = await chats.find().toArray();
+
     const seller = params.get("seller");
     if(seller){
         if(ObjectId.isValid(seller)){
         filter.$and?.push({"Seller": {$eq: ObjectId.createFromHexString(seller)}});
         }
     }
+    if (filter.$and?.length === 0) {
+        delete filter.$and;
+    }
+    const res = await chats.find(filter).toArray();
 
     return NextResponse.json(
         res,

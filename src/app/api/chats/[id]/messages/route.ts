@@ -16,7 +16,7 @@ export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
         return NextResponse.json({}, {status: 406});
     }
 
-    const res = await messages.findOne({Chat: ObjectId.createFromHexString(id)});
+    const res = await messages.find({Chat: ObjectId.createFromHexString(id)});
     return NextResponse.json(
         res,
         {
