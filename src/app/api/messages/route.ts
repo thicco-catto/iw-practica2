@@ -20,6 +20,13 @@ export async function GET(request: NextRequest) {
         filter.$and?.push({"Sender": {$eq: ObjectId.createFromHexString(sender)}});
         }
     }
+    const chat = params.get("chat");
+    if(chat) {
+        if(ObjectId.isValid(chat)){
+        filter.$and?.push({"Chat": {$eq: ObjectId.createFromHexString(chat)}});
+        }
+    }
+
     const res = await chats.find(filter).sort({Time: -1}).toArray();
 
     return NextResponse.json(
