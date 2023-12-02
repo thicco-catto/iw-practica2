@@ -10,7 +10,7 @@ const KEYS: string[] = [
 ];
 
 export async function GET(request: NextRequest) {
-    const chats = await GetMessages();
+    const message = await GetMessages();
     const params = request.nextUrl.searchParams;
     const filter: Filter<Document> = {$and: []};
 
@@ -26,8 +26,11 @@ export async function GET(request: NextRequest) {
         filter.$and?.push({"Chat": {$eq: ObjectId.createFromHexString(chat)}});
         }
     }
+    if (filter.$and?.length === 0) {
+        delete filter.$and;
+    }
 
-    const res = await chats.find(filter).sort({Time: -1}).toArray();
+    const res = await message.find(filter).toArray();
 
     return NextResponse.json(
         res,
@@ -61,6 +64,8 @@ export async function POST(request: NextRequest) {
     }
 
     json["Time"] = new Date(Date.now());
+    json["Chat"] = ObjectId.createFromHexString(json["Chat"]);
+    json["Sender"] = ObjectId.createFromHexString(json["Sender"]);
     const result = await chats.insertOne(json);
     const status = result.acknowledged? 201: 500;
     const id = result.insertedId;

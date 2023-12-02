@@ -65,7 +65,8 @@ export async function POST(request: NextRequest) {
             }
         );
     }
-
+    json["User"] = ObjectId.createFromHexString(json["User"]);
+    json["Seller"] = ObjectId.createFromHexString(json["Seller"]);
 
 
     const result = await chats.insertOne(json);
