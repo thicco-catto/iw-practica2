@@ -20,7 +20,12 @@ export async function POST(request: NextRequest) {
     }
 
     const image = file as File;
-    const raw = await image.arrayBuffer();
+    let raw;
+    try {
+        raw = await image.arrayBuffer();
+    } catch (_) {
+        return NextResponse.json({ msg: "Error converting file to array buffer" }, { status: 500 });
+    }
     const buffer = Buffer.from(raw);
 
     const cloudinary = GetCloudinary();
@@ -39,10 +44,16 @@ export async function POST(request: NextRequest) {
             streamifier.createReadStream(buffer).pipe(stream);
         });
     };
-    const result = await streamUpload();
 
-    if(!result) {
-        return NextResponse.json({msg: "Error when uploading image to clouinary"}, {status: 500});
+    let result;
+    try {
+        result = await streamUpload();
+    } catch (_) {
+        return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 500 });
+    }
+
+    if (!result) {
+        return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 500 });
     }
 
     return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
