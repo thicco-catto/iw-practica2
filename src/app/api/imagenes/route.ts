@@ -1,15 +1,8 @@
 import { GetCloudinary } from "@/lib/cloudinary";
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
+import streamifier from "streamifier";
 
-function createMissingFolders(destination: string) {
-    const destFolder = path.dirname(destination);
-
-    if (!existsSync(destFolder)) {
-        mkdirSync(destFolder, { recursive: true });
-    }
-}
 
 export async function POST(request: NextRequest) {
     let formData;
@@ -30,14 +23,27 @@ export async function POST(request: NextRequest) {
     const raw = await image.arrayBuffer();
     const buffer = Buffer.from(raw);
 
-    const filePath = path.join(process.cwd(), "tmp", image.name);
-    createMissingFolders(filePath);
-    writeFileSync(filePath, buffer);
-
     const cloudinary = GetCloudinary();
-    const result = await cloudinary.uploader.upload(filePath);
 
-    rmSync(filePath);
+    const streamUpload = () => {
+        return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                (error, result) => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        reject(error);
+                    }
+                }
+            );
+            streamifier.createReadStream(buffer).pipe(stream);
+        });
+    };
+    const result = await streamUpload();
+
+    if(!result) {
+        return NextResponse.json({msg: "Error when uploading image to clouinary"}, {status: 500});
+    }
 
     return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
 }
