@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const raw = await image.arrayBuffer();
     const buffer = Buffer.from(raw);
 
-    const filePath = path.join(process.cwd(), "public", "temp", image.name);
+    const filePath = path.join(process.cwd(), "tmp", image.name);
     createMissingFolders(filePath);
     writeFileSync(filePath, buffer);
 
