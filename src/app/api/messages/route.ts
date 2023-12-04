@@ -1,6 +1,6 @@
 import { GetMessages } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { ObjectId} from "mongodb";
+import { Filter, ObjectId, Document} from "mongodb";
 import { NextRequest, NextResponse } from "next/server";
 
 const KEYS: string[] = [
@@ -9,10 +9,28 @@ const KEYS: string[] = [
     "Chat"
 ];
 
-export async function GET() {
-    const chats = await GetMessages();
+export async function GET(request: NextRequest) {
+    const message = await GetMessages();
+    const params = request.nextUrl.searchParams;
+    const filter: Filter<Document> = {$and: []};
 
-    const res = await chats.find().toArray();
+    const sender = params.get("sender");
+    if(sender) {
+        if(ObjectId.isValid(sender)){
+        filter.$and?.push({"Sender": {$eq: ObjectId.createFromHexString(sender)}});
+        }
+    }
+    const chat = params.get("chat");
+    if(chat) {
+        if(ObjectId.isValid(chat)){
+        filter.$and?.push({"Chat": {$eq: ObjectId.createFromHexString(chat)}});
+        }
+    }
+    if (filter.$and?.length === 0) {
+        delete filter.$and;
+    }
+
+    const res = await message.find(filter).toArray();
 
     return NextResponse.json(
         res,
@@ -46,6 +64,8 @@ export async function POST(request: NextRequest) {
     }
 
     json["Time"] = new Date(Date.now());
+    json["Chat"] = ObjectId.createFromHexString(json["Chat"]);
+    json["Sender"] = ObjectId.createFromHexString(json["Sender"]);
     const result = await chats.insertOne(json);
     const status = result.acknowledged? 201: 500;
     const id = result.insertedId;
