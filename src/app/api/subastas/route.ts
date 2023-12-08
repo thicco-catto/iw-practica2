@@ -38,6 +38,11 @@ export async function GET(request: NextRequest) {
 
         filter.$and?.push({"Precio partida": {$lte: parsedMaxPrice}});
     }
+    const titulo = params.get("titulo");
+    if(titulo) {
+        filter.$and?.push({ "Titulo": { $regex: titulo, $options: "i" } });
+    }
+
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
     if (filter.$and?.length === 0) {
