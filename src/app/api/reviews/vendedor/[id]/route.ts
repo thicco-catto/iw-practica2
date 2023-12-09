@@ -18,7 +18,7 @@ export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
     const reviews = await GetReviews();
 
     const res = await reviews.find({
-        "vendedor":{$eq:ObjectId.createFromHexString(id)}
+        "Vendedor":{$eq:ObjectId.createFromHexString(id)}
 
     }).toArray();
 
