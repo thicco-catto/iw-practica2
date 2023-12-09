@@ -27,6 +27,11 @@ export async function GET(request: NextRequest) {
 
         filter.$and?.push({"Precio partida": {$gte: parsedMinPrice}});
     }
+
+    const estado = params.get("estado");
+    if(estado) {
+        filter.$and?.push({"Estado": {$eq: "running"}});
+    }
     
     
     const maxPrice = params.get("maxPrice");
@@ -38,6 +43,7 @@ export async function GET(request: NextRequest) {
 
         filter.$and?.push({"Precio partida": {$lte: parsedMaxPrice}});
     }
+    
     const titulo = params.get("titulo");
     if(titulo) {
         filter.$and?.push({ "Titulo": { $regex: titulo, $options: "i" } });
