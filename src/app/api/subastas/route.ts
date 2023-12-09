@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     const estado = params.get("estado");
     if(estado) {
-        filter.$and?.push({"Estado": {$eq: "running"}});
+        filter.$and?.push({"Estado": { $regex: estado, $options: "i" }});
     }
     
     
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 
         filter.$and?.push({"Precio partida": {$lte: parsedMaxPrice}});
     }
-    
+
     const titulo = params.get("titulo");
     if(titulo) {
         filter.$and?.push({ "Titulo": { $regex: titulo, $options: "i" } });
