@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
                     if (result) {
                         resolve(result);
                     } else {
+                        console.log("Error in upload");
+                        console.log(error);
                         reject(error);
                     }
                 }
@@ -44,8 +46,6 @@ export async function POST(request: NextRequest) {
             streamifier.createReadStream(buffer).pipe(stream);
         });
     };
-
-    console.log("Before stream upload call");
 
     let result;
     try {
