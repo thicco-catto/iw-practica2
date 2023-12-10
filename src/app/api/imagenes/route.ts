@@ -1,7 +1,5 @@
 import { GetCloudinary } from "@/lib/cloudinary";
-import { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import streamifier from "streamifier";
 
 
 export async function POST(request: NextRequest) {
@@ -30,33 +28,39 @@ export async function POST(request: NextRequest) {
 
     const cloudinary = GetCloudinary();
 
-    const streamUpload = () => {
-        return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                (error, result) => {
-                    if (result) {
+    const mime = image.type;
+    const encoding = "base64";
+    const base64Data = Buffer.from(buffer).toString("base64");
+    const fileUri = "data:" + mime + ";" + encoding + "," + base64Data;
+
+    try {
+        const uploadToCloudinary = () => {
+            return new Promise((resolve, reject) => {
+                cloudinary.uploader.upload(fileUri, {
+                    invalidate: true
+                })
+                    .then((result) => {
+                        console.log(result);
                         resolve(result);
-                    } else {
-                        console.log("Error in upload");
+                    })
+                    .catch((error) => {
                         console.log(error);
                         reject(error);
-                    }
-                }
-            );
-            streamifier.createReadStream(buffer).pipe(stream);
-        });
-    };
+                    });
+            });
+        };
 
-    let result;
-    try {
-        result = await streamUpload();
-    } catch (_) {
-        return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 400 });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await uploadToCloudinary() as any;
+
+        const imageUrl = result.secure_url;
+
+        return NextResponse.json(
+            { success: true, imageUrl: imageUrl },
+            { status: 200 }
+        );
+    } catch (error) {
+        console.log("server err", error);
+        return NextResponse.json({ err: "Internal Server Error" }, { status: 500 });
     }
-
-    if (!result) {
-        return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 400 });
-    }
-
-    return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
 }
