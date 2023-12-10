@@ -1,7 +1,7 @@
 import { GetCloudinary } from "@/lib/cloudinary";
-import { UploadApiResponse } from "cloudinary";
+//import { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import streamifier from "streamifier";
+//import streamifier from "streamifier";
 
 
 export async function POST(request: NextRequest) {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
     const buffer = Buffer.from(raw);
 
-    const cloudinary = GetCloudinary();
+    //const cloudinary = GetCloudinary();
     console.log(buffer);
 
     return NextResponse.json({}, {status:200});
