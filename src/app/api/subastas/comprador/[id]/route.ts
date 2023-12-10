@@ -21,9 +21,6 @@ export async function GET(_: NextRequest, {params}: Params<RouteParams>) {
 
     }).toArray();
 
-    if(res.length === 0) {
-        return NextResponse.json({}, {status: 404});
-    }
     //devuelvo el array entero
     return NextResponse.json(res, {status: 200});
 }
