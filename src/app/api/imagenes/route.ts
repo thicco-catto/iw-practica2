@@ -29,32 +29,35 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(raw);
 
     const cloudinary = GetCloudinary();
+    console.log(buffer);
 
-    const streamUpload = () => {
-        return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                (error, result) => {
-                    if (result) {
-                        resolve(result);
-                    } else {
-                        reject(error);
-                    }
-                }
-            );
-            streamifier.createReadStream(buffer).pipe(stream);
-        });
-    };
+    return NextResponse.json({}, {status:200});
 
-    let result;
-    try {
-        result = await streamUpload();
-    } catch (_) {
-        return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 400 });
-    }
+    // const streamUpload = () => {
+    //     return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
+    //         const stream = cloudinary.uploader.upload_stream(
+    //             (error, result) => {
+    //                 if (result) {
+    //                     resolve(result);
+    //                 } else {
+    //                     reject(error);
+    //                 }
+    //             }
+    //         );
+    //         streamifier.createReadStream(buffer).pipe(stream);
+    //     });
+    // };
 
-    if (!result) {
-        return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 400 });
-    }
+    // let result;
+    // try {
+    //     result = await streamUpload();
+    // } catch (_) {
+    //     return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 400 });
+    // }
 
-    return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
+    // if (!result) {
+    //     return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 400 });
+    // }
+
+    // return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
 }
