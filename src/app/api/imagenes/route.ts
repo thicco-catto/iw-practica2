@@ -1,7 +1,7 @@
-//import { GetCloudinary } from "@/lib/cloudinary";
-//import { UploadApiResponse } from "cloudinary";
+import { GetCloudinary } from "@/lib/cloudinary";
+import { UploadApiResponse } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-//import streamifier from "streamifier";
+import streamifier from "streamifier";
 
 
 export async function POST(request: NextRequest) {
@@ -28,36 +28,35 @@ export async function POST(request: NextRequest) {
     }
     const buffer = Buffer.from(raw);
 
-    //const cloudinary = GetCloudinary();
-    console.log(buffer);
+    const cloudinary = GetCloudinary();
 
-    return NextResponse.json({}, {status:200});
+    const streamUpload = () => {
+        return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                (error, result) => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        reject(error);
+                    }
+                }
+            );
+            streamifier.createReadStream(buffer).pipe(stream);
+        });
+    };
 
-    // const streamUpload = () => {
-    //     return new Promise<UploadApiResponse | undefined>((resolve, reject) => {
-    //         const stream = cloudinary.uploader.upload_stream(
-    //             (error, result) => {
-    //                 if (result) {
-    //                     resolve(result);
-    //                 } else {
-    //                     reject(error);
-    //                 }
-    //             }
-    //         );
-    //         streamifier.createReadStream(buffer).pipe(stream);
-    //     });
-    // };
+    console.log("Before stream upload call");
 
-    // let result;
-    // try {
-    //     result = await streamUpload();
-    // } catch (_) {
-    //     return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 400 });
-    // }
+    let result;
+    try {
+        result = await streamUpload();
+    } catch (_) {
+        return NextResponse.json({ msg: "Error in promise uploading image to cloudinary" }, { status: 400 });
+    }
 
-    // if (!result) {
-    //     return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 400 });
-    // }
+    if (!result) {
+        return NextResponse.json({ msg: "Error when uploading image to cloudinary" }, { status: 400 });
+    }
 
-    // return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
+    return NextResponse.json({ public_id: result.public_id, url: result.url }, { status: 200 });
 }
