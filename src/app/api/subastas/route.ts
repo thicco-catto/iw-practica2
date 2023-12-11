@@ -1,7 +1,7 @@
 import { GetSubastas } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
 import { NextRequest, NextResponse } from "next/server";
-import { Filter, Document } from "mongodb";
+import { Filter, Document, ObjectId } from "mongodb";
 
 const KEYS: string[] = [
     "Descripcion",
@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
 
     json["Fecha limite"] = new Date(json["Fecha limite"]);
     json["Estado"] = "en subasta";
+    json["Subastador"] = ObjectId.createFromBase64(json["Subastador"]);
     
     const result = await subastas.insertOne(json);
 
