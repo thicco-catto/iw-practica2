@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     json["Fecha limite"] = new Date(json["Fecha limite"]);
     json["Estado"] = "en subasta";
-    json["Subastador"] = ObjectId.createFromBase64(json["Subastador"]);
+    json["Subastador"] = ObjectId.createFromHexString(json["Subastador"]);
     
     const result = await subastas.insertOne(json);
 
