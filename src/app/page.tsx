@@ -1,3 +1,5 @@
+"use client";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
 
 export default function Home() {
@@ -108,6 +110,12 @@ export default function Home() {
           </p>
         </a>
       </div>
+      <button
+          onClick={() => signIn()}
+          className="bg-sky-400 px-3 py-2 rounded"
+        >
+          Sign In
+        </button>
     </main>
   );
 }

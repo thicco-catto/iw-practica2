@@ -12,6 +12,7 @@
     "cloudinary": "^1.41.0",
     "mongodb": "^6.1.0",
     "next": "13.5.5",
+    "next-auth": "^4.24.5",
     "react": "^18",
     "react-dom": "^18",
     "streamifier": "^0.1.1"
