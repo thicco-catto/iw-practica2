@@ -7,6 +7,7 @@ const KEYS: string[] = [
     "Email",
     "Nombre usuario",
     "Foto",
+    "Direccion"
 ];
 
 export async function GET(request: NextRequest) {
