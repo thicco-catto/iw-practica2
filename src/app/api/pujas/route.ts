@@ -1,7 +1,7 @@
 import { GetPujas } from "@/lib/database";
 import { NextRequest, NextResponse } from "next/server";
 import { HasAllKeys } from "@/lib/dict_helper";
-import { Filter, Document } from "mongodb";
+import { Filter, Document, ObjectId } from "mongodb";
 
 const KEYS: string[] = [
     "Fecha de puja",
@@ -59,6 +59,9 @@ export async function POST(request: NextRequest){
             }
         );
     }
+
+    json["Postor"] = ObjectId.createFromHexString(json["Postor"]);
+    json["Subasta"] = ObjectId.createFromHexString(json["Subasta"]);
 
     const result = await pujas.insertOne(json);
     const status = result.acknowledged? 201: 500;
