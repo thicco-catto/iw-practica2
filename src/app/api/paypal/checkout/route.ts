@@ -3,7 +3,6 @@ import { checkoutOrder } from "@/lib/paypal";
 import { NextRequest, NextResponse } from "next/server";
 
 const KEYS: string[] = [
-  "Producto",
   "Precio",
 ];
 export async function POST(request: NextRequest){
@@ -18,10 +17,10 @@ export async function POST(request: NextRequest){
           }
       );
   }
-  const producto = json.Producto;
+
   const precio = json.Precio;
 
- const response = await checkoutOrder(Number.parseFloat(precio), producto);
+ const response = await checkoutOrder(Number.parseFloat(precio));
  return NextResponse.json({response},{status: 201});
 
 }

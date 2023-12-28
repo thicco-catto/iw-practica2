@@ -15,7 +15,7 @@ export function setClient(){
 return new paypal.core.PayPalHttpClient(environment);
 }
 
-export async function checkoutOrder(price: number, producto: string){
+export async function checkoutOrder(price: number){
     const client = setClient();
     const request = new paypal.orders.OrdersCreateRequest();
 
@@ -25,21 +25,10 @@ export async function checkoutOrder(price: number, producto: string){
             {
                 amount: {
                     currency_code: "EUR",
-                    value: price.toString()
+                    value: price.toString(),
+                    
                 },
-                items: [
-                    {
-                        name: producto,
-                        quantity: "1",
-                        unit_amount: {
-                            currency_code:"EUR",
-                            value: price.toString()
-                        },
-                        category: "PHYSICAL_GOODS"
-                    }
-
-
-                ]
+                
             }
         ]
         
