@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     const email = params.get("emailUsuario");
     if(email) {
-        filter.$and?.push({ "Email": { $regex: email, $options: "i" } });
+        filter.$and?.push({ "Email": { $eq: email } });
     }
 
     //En el caso de que el and este vacio, hay que borrar el and porque sino no funciona
