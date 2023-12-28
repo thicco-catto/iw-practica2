@@ -1,7 +1,7 @@
 import { GetUsuarios } from "@/lib/database";
 import { HasAllKeys } from "@/lib/dict_helper";
 import { NextRequest, NextResponse } from "next/server";
-import { Filter, Document } from "mongodb";
+import { Filter, Document, ObjectId } from "mongodb";
 
 const KEYS: string[] = [
     "Email",
@@ -53,6 +53,8 @@ export async function POST(request: NextRequest) {
             }
         );
     }
+
+    json["Direccion"] = ObjectId.createFromHexString(json["Direccion"]);
 
     const result = await usuarios.insertOne(json);
     const status = result.acknowledged? 201: 500;
